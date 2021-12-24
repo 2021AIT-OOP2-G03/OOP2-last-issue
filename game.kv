@@ -16,7 +16,7 @@
                     Color:
                         rgba: 1,1,1,1
                     Rectangle:
-                        source: root.music_text
+                        source: root.music_image
                         pos: self.pos
                         size: self.size
             Button:
@@ -52,7 +52,7 @@
                 orientation: 'vertical'
                 Label:
                     size_hint_y: 1/3
-                    text: root.music_text + ' - ' +  root.level
+                    text: root.music_name + ' - ' +  root.level
                     font_name: 'ipamp.ttf'
                     font_size: 40
                 GridLayout:
@@ -63,21 +63,21 @@
                         font_size: 50
                         font_name: 'ipamp.ttf'
                     Label:
-                        text: '0'
+                        text: root.first_score
                         font_size: 40
                     Label:
                         text: '2位'
                         font_size: 50
                         font_name: 'ipamp.ttf'
                     Label:
-                        text: '0'
+                        text: root.second_score
                         font_size: 40
                     Label:
                         text: '3位'
                         font_size: 50
                         font_name: 'ipamp.ttf'
                     Label:
-                        text: '0'
+                        text: root.third_score
                         font_size: 40
                     
 
