@@ -9,6 +9,7 @@ from kivy.core.window import Window
 from kivy.uix.widget import Widget
 from kivy.properties import StringProperty
 from kivy.properties import NumericProperty
+from kivy.clock import Clock
 
 import sqlite3
 
@@ -141,7 +142,21 @@ class HomeScreen(Screen):
 
 
 class PlayScreen(Screen):
-    pass
+
+    dt = 1/30
+    move_y = NumericProperty(1000)
+    count = 0
+    text = StringProperty('Start')
+    dx = 5
+   
+    def update(self, *args):
+       self.move_y -= self.dx
+       self.count += 1
+       self.text = '{}'.format(self.count)
+
+    def start_game(self):
+        Clock.schedule_interval(self.update,self.dt)
+        
 
 
 sm = ScreenManager()
