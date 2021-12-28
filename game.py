@@ -98,6 +98,45 @@ class HomeScreen(Screen):
         self.first_score = str(score[0][0])
         self.second_score = str(score[1][0])
         self.third_score = str(score[2][0])
+
+        # クローズ
+        con.close()
+
+    def High_Score(self, arg):
+        # 押されたラベルの難易度を格納
+        self.level = arg
+
+        sorted_score = []
+
+        # 接続処理, カーソルオブジェクトを取得
+        con = sqlite3.connect('score.db')
+        cur = con.cursor()
+
+        sql = 'insert into oop2-last-issue values(?,?,score)', [
+            self.music_name, self.level]
+        # 仮実装、曲名と難易度、スコアを挿入
+        cur.execute(sql)
+        cur.commit()
+
+        # スコアのソーティング
+        sort = 'select * from "oop2-last-issue" order by score desc where music_name=? and mode=?', [
+            self.music_name, self.level]
+        cur.execute(sort)
+
+        # ソートしたデータをsorted_scoreに格納
+        for data in cur:
+            sorted_score.append(data)
+
+        # game.kvで使用する変数, 最高スコアの格納
+        for score in sorted_score:
+            if score > self.first_score:
+                self.first_score = str(score[0][0])
+            elif score > self.second_score and score < self.first_score:
+                self.second_score = str(score[1][0])
+            elif score > self.third_score and score < self.second_score:
+                self.third_score = str(score[2][0])
+        # クローズ
+        con.close()
         
 class PlayScreen(Screen):
 
