@@ -156,16 +156,15 @@ class PlayScreen(Screen):
             self.n = 4
             self.m = 30
 
-            # #ノーツの描画
-            # self.rect1 = Rectangle(pos=(100,self.move_y),size=(100,50))
-
-            # #ノーツの描画
-            # self.rect2 = Rectangle(pos=(300,self.move_y + 10),size=(100,50))
-
+            # ノーツを入れる二次元配列の初期設定
             self.rect = [[Rectangle(pos=(0,self.move_y-100),size=(0,0)) for column in range(self.m)] for row in range(self.n)]
 
             for l in range(self.n):
                 #ノーツの描画
+                # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))] = 
+                # Rectangle(pos=(200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
+                # 　　　　　　self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当))),
+                # 　　　　　　size=(200,100)(=ノーツの縦と横の長さ))
                 self.rect[l][0+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(0+3*l)),size=(200,100))
                 self.rect[l][2+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(2+3*l)),size=(200,100))
                 self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
@@ -176,6 +175,9 @@ class PlayScreen(Screen):
 
        for l in range(self.n):
             #ノーツの描画
+            # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))].pos = 
+            # 200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
+            # self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当)))
             self.rect[l][0+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(0+3*l)
             self.rect[l][2+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(2+3*l)
             self.rect[l][4+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(4+3*l)
