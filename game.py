@@ -166,9 +166,9 @@ class PlayScreen(Screen):
 
             for l in range(self.n):
                 #ノーツの描画
-                self.rect[l][0+3*l] = Rectangle(pos=(100*l+10*(l-1) ,self.move_y+50*(0+3*l)),size=(100,50))
-                self.rect[l][10+3*l] = Rectangle(pos=(100*l+10*(l-1) ,self.move_y+50*(10+3*l)),size=(100,50))
-                self.rect[l][20+3*l] = Rectangle(pos=(100*l+10*(l-1) ,self.move_y+50*(20+3*l)),size=(100,50))
+                self.rect[l][0+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(0+3*l)),size=(200,100))
+                self.rect[l][2+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(2+3*l)),size=(200,100))
+                self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
 
     def update(self, *args):
        #y軸上のノーツの位置を更新 
@@ -176,9 +176,9 @@ class PlayScreen(Screen):
 
        for l in range(self.n):
             #ノーツの描画
-            self.rect[l][0+3*l].pos = 100*l+10*(l-1) ,self.move_y+50*(0+3*l)
-            self.rect[l][10+3*l].pos = 100*l+10*(l-1) ,self.move_y+50*(10+3*l)
-            self.rect[l][20+3*l].pos = 100*l+10*(l-1) ,self.move_y+50*(20+3*l)
+            self.rect[l][0+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(0+3*l)
+            self.rect[l][2+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(2+3*l)
+            self.rect[l][4+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(4+3*l)
        
 
     #ゲーム画面右下のStartボタンが押された時に実行される処理
