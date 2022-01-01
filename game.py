@@ -151,17 +151,36 @@ class PlayScreen(Screen):
         with self.canvas:
             #ノーツの色設定
             Color(1,0,0,5,1)
-            #ノーツの描画
-            self.rect = Rectangle(pos=(100,self.move_y),size=(100,50))
 
-        
-   
+            # レーンと行の設定(nレーン×m行(n=4or6, m=曲の長さ)分
+            self.n = 4
+            self.m = 30
+
+            # ノーツを入れる二次元配列の初期設定
+            self.rect = [[Rectangle(pos=(0,self.move_y-100),size=(0,0)) for column in range(self.m)] for row in range(self.n)]
+
+            for l in range(self.n):
+                #ノーツの描画
+                # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))] = 
+                # Rectangle(pos=(200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
+                # 　　　　　　self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当))),
+                # 　　　　　　size=(200,100)(=ノーツの縦と横の長さ))
+                self.rect[l][0+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(0+3*l)),size=(200,100))
+                self.rect[l][2+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(2+3*l)),size=(200,100))
+                self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
+
     def update(self, *args):
        #y軸上のノーツの位置を更新 
        self.move_y -= self.dx
 
-       #ノーツの更新後の位置を画面に描画
-       self.rect.pos = 100,self.move_y
+       for l in range(self.n):
+            #ノーツの描画
+            # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))].pos = 
+            # 200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
+            # self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当)))
+            self.rect[l][0+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(0+3*l)
+            self.rect[l][2+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(2+3*l)
+            self.rect[l][4+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(4+3*l)
        
 
     #ゲーム画面右下のStartボタンが押された時に実行される処理
