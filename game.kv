@@ -81,13 +81,14 @@
                         font_size: 40
                     
 
-
         BoxLayout:
             size_hint_y: 0.4
             Button:
                 text: 'Play'
                 font_size: 50
-                on_press: root.manager.current = 'play'
+                on_press:
+                    root.select_game(root.music_name, root.level)
+                    root.manager.current = 'play'
             Button:
                 text: 'Quit'
                 font_size: 50
@@ -99,10 +100,22 @@
         FloatLayout:
             
         GridLayout:
-            rows: 5
+            rows: 6
             cols: 2
             Label:
+                text: 'Total'
+            Label:
+                text: '0'
+            Label:
+                text: 'Excellent'
+            Label:
+                text: '0'
+            Label:
                 text: 'Good'
+            Label:
+                text: '0'
+            Label:
+                text: 'Bad'
             Label:
                 text: '0'
             Label:
@@ -112,7 +125,6 @@
             Button:
                 text: root.text
                 on_press: root.start_game()
-                
             Button:
                 text: 'Back'
                 font_size: 40
