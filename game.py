@@ -202,6 +202,21 @@ class PlayScreen(Screen):
             #print(self.move_y+100*(2+3*l))
             #print(self.move_y+100*(4+3*l))
 
+            for i in range(0,self.n+1,2):
+                #スルー判定
+                """
+                今のノーツの動かし方だとノーツを判定し終わった後もスルー判定が入ってしまうので、
+                最初のノーツが通り過ぎた時点で曲全体のノーツ数を入れて成功するたびにミスの数がヘル仕様になっています
+                ここの部分に関してはもっといい方法があれば教えてほしいです…
+                """
+                if self.move_y+100*(i+3*l) == -150: #スルー判定をするy座標 
+                    #self.miss = 全体のノーツ数　ー　(excellentの数 + greatの数 + goodの数)                      
+                    self.miss = self.n*3 - (int(self.countexcellent) + int(self.countgreat)+ int(self.countgood)) 
+                    self.countmiss = str(self.miss)
+                        
+                        
+
+
    
     def _keyboard_closed(self):
             self._keyboard.unbind(on_key_down = self._on_keyboard_down)
@@ -209,67 +224,106 @@ class PlayScreen(Screen):
     
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         #dfjkのキーボードを使う
+        #判定場所になります。y座標が0〜15でexcellent、16〜50でgreat、51〜100でgood、100〜125でmiss、それ以外は反応しないようになっています。
+        #多重反応を防ぐためにノーツを消す処理を行なっています。deleteを呼び出すことでノーツを削除しています。
         for i in range(0,self.n+1,2):
             if keycode[1] == 'd':
                 if self.move_y+100*(i+3*0) > 0 and self.move_y+100*(i+3*0) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
+                    """
+                        ノーツ削除完成形
+                    self.canvas.remove(self.rect[0][i+3*0])
+                        →下でdefを作ってまとめてできるようにしてある。
+                    """
+                    self.delete(0,i)#delete
                 elif self.move_y+100*(i+3*0) > 15 and self.move_y+100*(i+3*0) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
+                    self.delete(0,i)#delete
                 elif self.move_y+100*(i+3*0) > 50 and self.move_y+100*(i+3*0) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
+                    self.delete(0,i)#delete
                 elif self.move_y+100*(i+3*0) > 100 and self.move_y+100*(i+3*0) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.delete(0,i)#delete
+                    #self.through()
                     
 
             if keycode[1] == 'f':
                 if self.move_y+100*(i+3*1) > 0 and self.move_y+100*(i+3*1) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
+                    self.delete(1,i)#delete
                 elif self.move_y+100*(i+3*1) > 15 and self.move_y+100*(i+3*1) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
+                    self.delete(1,i)#delete
                 elif self.move_y+100*(i+3*1) > 50 and self.move_y+100*(i+3*1) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
+                    self.delete(1,i)#delete
                 elif self.move_y+100*(i+3*1) > 100 and self.move_y+100*(i+3*1) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.delete(1,i)#delete
 
             if keycode[1] == 'j':
                 if self.move_y+100*(i+3*2) > 0 and self.move_y+100*(i+3*2) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
+                    self.delete(2,i)#delete
                 elif self.move_y+100*(i+3*2) > 15 and self.move_y+100*(i+3*2) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
+                    self.delete(2,i)#delete
                 elif self.move_y+100*(i+3*2) > 50 and self.move_y+100*(i+3*2) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
+                    self.delete(2,i)#delete
                 elif self.move_y+100*(i+3*2) > 100 and self.move_y+100*(i+3*2) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.delete(2,i)#delete
 
             if keycode[1] == 'k':
                 if self.move_y+100*(i+3*3) > 0 and self.move_y+100*(i+3*3) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
+                    self.delete(3,i)#delete
                 elif self.move_y+100*(i+3*3) > 15 and self.move_y+100*(i+3*3) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
+                    self.delete(3,i)#delete
                 elif self.move_y+100*(i+3*3) > 50 and self.move_y+100*(i+3*3) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
+                    self.delete(3,i)#delete
                 elif self.move_y+100*(i+3*3) > 100 and self.move_y+100*(i+3*3) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
-                
+                    self.delete(3,i)#delete
+
+
+    #ノーツを消す処理
+    def delete(self,row,number):
+        #当たり判定があった時にノーツを消します。
+        #ノーツを消すことのよって多重判定を回避します。
+        #row=レーン番号　number=行の数　※ここの引数は基本的にノーツの描画と同じものになっています。
+        #print('ok')
+        self.canvas.remove(self.rect[row][number+3*row])
+
+    """ 
+        作業時メモ
     
-            
-       
+    下のコードだとノーツが止まる
+        self.rect[0][i+3*0] = Rectangle(pos=(0,self.move_y-100),size=(0,0))
+                    
+    ノーツをぶっ飛ばす方法。これだと列全体が下に下がってダメになってしまう。
+        #self.move_y = self.move_y+100*(i+3*0) - 500
+    """
 
     #ゲーム画面右下のStartボタンが押された時に実行される処理
     def start_game(self):
@@ -278,11 +332,13 @@ class PlayScreen(Screen):
         #update関数を一秒間に30回の周期で実行
         Clock.schedule_interval(self.update,self.dt)
         
+        
 
 
 sm = ScreenManager()
 sm.add_widget(HomeScreen(name='home'))
 sm.add_widget(PlayScreen(name='play'))
+
 
 class MyApp(App):
     def build(self):
