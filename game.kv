@@ -98,22 +98,35 @@
     BoxLayout:
         
         FloatLayout:
-            
+            canvas:
+                Color:
+                    rgba: 1,0,0.5,1
+                Rectangle:
+                    pos: root.width * 0,0#始まりの座標
+                    size: root.width/(2),100
+        
         GridLayout:
             rows: 6
             cols: 2
             Label:
-                text: 'Total'
-            Label:
-                text: '0'
-            Label:
+            #     text: 'Total'
+            # Label:
+            #     text: '0'
+            # Label:
+            #     text: 'Excellent'
+            # Label:
+            #     text: '0'
                 text: 'Excellent'
             Label:
-                text: '0'
+                text: root.countexcellent
+            Label:
+                text: 'Great'
+            Label:
+                text: root.countgreat
             Label:
                 text: 'Good'
             Label:
-                text: '0'
+                text: root.countgood
             Label:
                 text: 'Bad'
             Label:
@@ -121,7 +134,7 @@
             Label:
                 text: 'Miss'
             Label:
-                text: '0'
+                text: root.countmiss
             Button:
                 text: root.text
                 on_press: root.start_game()

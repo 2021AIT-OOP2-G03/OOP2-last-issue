@@ -10,11 +10,11 @@ from kivy.uix.widget import Widget
 from kivy.properties import StringProperty
 from kivy.properties import NumericProperty
 from kivy.clock import Clock
-
 from kivy.core.audio import SoundLoader
+from kivy.uix.label import Label
+from kivy.uix.scatter import Scatter
 
 import sqlite3
-
 import music_list
 
 
@@ -154,15 +154,15 @@ class HomeScreen(Screen):
 
 class PlayScreen(Screen):
 
-    dt = 0  # フレーム周期
-    move_y = NumericProperty(1000)  # ノーツのy軸上の位置
-    text = StringProperty('Start')
-    dy = 0  # ノーツの落下速度
-    dist = 400
-    music_sound_url = ''  # 曲(.mp3)のファイルパス
-    melody = []  # 曲の01譜面
-    melody_comp = []  # 曲の01譜面のうち、各レーンごとの音符の座標をリスト化したもの(補足より)
-    sound = SoundLoader.load(music_sound_url)
+    # dt = 0  # フレーム周期
+    # move_y = NumericProperty(1000)  # ノーツのy軸上の位置
+    # text = StringProperty('Start')
+    # dy = 0  # ノーツの落下速度
+    # dist = 400
+    # music_sound_url = ''  # 曲(.mp3)のファイルパス
+    # melody = []  # 曲の01譜面
+    # melody_comp = []  # 曲の01譜面のうち、各レーンごとの音符の座標をリスト化したもの(補足より)
+    # sound = SoundLoader.load(music_sound_url)
 
     # 補足: melody -> melody_comp 変換の例
     '''
@@ -173,7 +173,47 @@ class PlayScreen(Screen):
         [0,0,0,1,0,0,0,1],         [3,7],
     ]                           ]
     '''
+    '''
+    # HomeScreen().select_gameから選択される曲名と難易度
+    music_name = ''
+    level = ''
 
+    rect = []
+    '''
+
+    '''
+    def __init__(self, **kw):
+        super().__init__(**kw)
+    '''
+
+    dt = 1/30  # フレーム周期
+    move_y = NumericProperty(1000)  # ノーツのy軸上の位置
+    text = StringProperty('Start')
+    # kvファイル用に4つの変数分けています。わけないと1個の判定で全部に加算される動作が見られました。
+    countgood = StringProperty('0')
+    countgreat = StringProperty('0')
+    countexcellent = StringProperty('0')
+    countmiss = StringProperty('0')
+    good = 0  # goodが出た回数のカウント
+    great = 0  # greatが出た回数のカウント
+    excellent = 0  # excellentが出た回数のカウント
+    miss = 0  # missが出た回数のカウント
+    dy = 0  # ノーツの落下速度
+    dist = 400
+    # dx = 5 #ノーツの落下速度
+    music_sound_url = ''  # 曲(.mp3)のファイルパス
+    melody = []  # 曲の01譜面
+    melody_comp = []  # 曲の01譜面のうち、各レーンごとの音符の座標をリスト化したもの(補足より)
+    sound = SoundLoader.load(music_sound_url)
+    # 補足: melody -> melody_comp 変換の例
+    '''
+    [                           [
+        [1,0,0,0,1,0,0,0],         [0,4],
+        [0,1,0,0,0,0,1,0],  ->     [1,6],
+        [0,0,1,0,0,1,0,0],         [2,5],
+        [0,0,0,1,0,0,0,1],         [3,7],
+    ]                           ]
+    '''
     # HomeScreen().select_gameから選択される曲名と難易度
     music_name = ''
     level = ''
@@ -181,7 +221,11 @@ class PlayScreen(Screen):
     rect = []
 
     def __init__(self, **kw):
-        super().__init__(**kw)
+        super(PlayScreen, self).__init__(**kw)
+        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)
+        #self._keyboard.bind(on_key_up = self._on_keyboard_up)
+
         # ノーツの描画処理
         with self.canvas:
             # ノーツの色設定
@@ -192,28 +236,118 @@ class PlayScreen(Screen):
             self.limit_row = 5000
 
             # ノーツを入れる二次元配列の初期設定
+
             # self.rect = [[Rectangle(pos=(0,self.move_y),size=(0,0)) for column in range(self.m)] for row in range(self.n)]
             self.rect = [[Rectangle(pos=(0, 0), size=(0, 0)) for row in range(
                 self.limit_row)] for col in range(self.limit_col)]
+
+            '''
+            self.rect = [[Rectangle(pos=(0,self.move_y-100),size=(0,0)) for column in range(self.m)] for row in range(self.n)]
+
+            for l in range(self.n):
+                #ノーツの描画
+                # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))] = 
+                # Rectangle(pos=(200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
+                # self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当))),
+                # size=(200,100)(=ノーツの縦と横の長さ))
+                self.rect[l][0+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(0+3*l)),size=(200,100))
+                self.rect[l][2+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(2+3*l)),size=(200,100))
+                self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
+            '''
 
     def update(self, *args):
 
         # y軸上のノーツの位置を更新
         self.move_y -= self.dy
+        print(self.move_y)
 
         for col in range(len(self.melody_comp)):
             # ノーツの描画
             # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))].pos =
             # 200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
             # self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当)))
+
             for row in range(len(self.melody_comp[col])):
                 self.rect[col][self.melody_comp[col][row]].pos = 200 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
 
         # print(self.rect[0][0].pos, self.rect[3][3].pos) # 任意のノーツの座標の流れを確認できる(デバッグ用)
 
-    # ゲーム画面右下のStartボタンが押された時に実行される処理
+            # コンフリクトが起きていたため片方コメントアウトしました。
+            '''
+            self.rect[l][0+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(0+3*l)
+            self.rect[l][2+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(2+3*l)
+            self.rect[l][4+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(4+3*l)
+            
+            #print(self.move_y+100*(0+3*0))
+            #print(self.move_y+100*(2+3*l))
+            #print(self.move_y+100*(4+3*l))
+            '''
 
+    def _keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        # dfjkのキーボードを使う
+        for i in range(0, self.n+1, 2):
+            if keycode[1] == 'd':
+                if self.move_y+100*(i+3*0) > 0 and self.move_y+100*(i+3*0) <= 15:
+                    self.excellent += 1
+                    self.countexcellent = str(self.excellent)
+                elif self.move_y+100*(i+3*0) > 15 and self.move_y+100*(i+3*0) <= 50:
+                    self.great += 1
+                    self.countgreat = str(self.great)
+                elif self.move_y+100*(i+3*0) > 50 and self.move_y+100*(i+3*0) <= 100:
+                    self.good += 1
+                    self.countgood = str(self.good)
+                elif self.move_y+100*(i+3*0) > 100 and self.move_y+100*(i+3*0) <= 125:
+                    self.miss += 1
+                    self.countmiss = str(self.miss)
+
+            if keycode[1] == 'f':
+                if self.move_y+100*(i+3*1) > 0 and self.move_y+100*(i+3*1) <= 15:
+                    self.excellent += 1
+                    self.countexcellent = str(self.excellent)
+                elif self.move_y+100*(i+3*1) > 15 and self.move_y+100*(i+3*1) <= 50:
+                    self.great += 1
+                    self.countgreat = str(self.great)
+                elif self.move_y+100*(i+3*1) > 50 and self.move_y+100*(i+3*1) <= 100:
+                    self.good += 1
+                    self.countgood = str(self.good)
+                elif self.move_y+100*(i+3*1) > 100 and self.move_y+100*(i+3*1) <= 125:
+                    self.miss += 1
+                    self.countmiss = str(self.miss)
+
+            if keycode[1] == 'j':
+                if self.move_y+100*(i+3*2) > 0 and self.move_y+100*(i+3*2) <= 15:
+                    self.excellent += 1
+                    self.countexcellent = str(self.excellent)
+                elif self.move_y+100*(i+3*2) > 15 and self.move_y+100*(i+3*2) <= 50:
+                    self.great += 1
+                    self.countgreat = str(self.great)
+                elif self.move_y+100*(i+3*2) > 50 and self.move_y+100*(i+3*2) <= 100:
+                    self.good += 1
+                    self.countgood = str(self.good)
+                elif self.move_y+100*(i+3*2) > 100 and self.move_y+100*(i+3*2) <= 125:
+                    self.miss += 1
+                    self.countmiss = str(self.miss)
+
+            if keycode[1] == 'k':
+                if self.move_y+100*(i+3*3) > 0 and self.move_y+100*(i+3*3) <= 15:
+                    self.excellent += 1
+                    self.countexcellent = str(self.excellent)
+                elif self.move_y+100*(i+3*3) > 15 and self.move_y+100*(i+3*3) <= 50:
+                    self.great += 1
+                    self.countgreat = str(self.great)
+                elif self.move_y+100*(i+3*3) > 50 and self.move_y+100*(i+3*3) <= 100:
+                    self.good += 1
+                    self.countgood = str(self.good)
+                elif self.move_y+100*(i+3*3) > 100 and self.move_y+100*(i+3*3) <= 125:
+                    self.miss += 1
+                    self.countmiss = str(self.miss)
+
+    # ゲーム画面右下のStartボタンが押された時に実行される処理
     def start_game(self):
         # Startボタンのテキストを変更
         self.text = ''
