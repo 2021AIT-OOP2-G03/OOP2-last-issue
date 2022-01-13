@@ -190,6 +190,7 @@ class PlayScreen(Screen):
     move_y = NumericProperty(1000)  # ノーツのy軸上の位置
     text = StringProperty('Start')
     # kvファイル用に4つの変数分けています。わけないと1個の判定で全部に加算される動作が見られました。
+    countscore = StringProperty('0')
     countgood = StringProperty('0')
     countgreat = StringProperty('0')
     countexcellent = StringProperty('0')
@@ -217,6 +218,7 @@ class PlayScreen(Screen):
     # HomeScreen().select_gameから選択される曲名と難易度
     music_name = ''
     level = ''
+    score = 0  # 合計スコア
 
     rect = []
 
@@ -270,6 +272,17 @@ class PlayScreen(Screen):
                 self.rect[col][self.melody_comp[col][row]].pos = 200 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
 
+            for i in range(0, 2):
+                for j in range(0, 4):
+                    # スルー判定
+                    # スルー判定をするy座標
+                    if self.move_y+(self.dist*self.melody_comp[j][i]) == -150:
+                        # self.miss = 全体のノーツ数　ー　(excellentの数 + greatの数 + goodの数 + missの数)
+                        self.miss = self.n*2 - \
+                            (int(self.countexcellent) +
+                             int(self.countgreat) + int(self.countgood))
+                        self.countmiss = str(self.miss)
+
         # 任意のノーツの座標の流れを確認できる(デバッグ用)
         # print(self.rect[0][0].pos, self.rect[3][3].pos)
 
@@ -296,72 +309,100 @@ class PlayScreen(Screen):
                 if self.move_y+(self.dist*self.melody_comp[0][i]) > 0 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
+                    self.score += 50
+                    self.countscore = str(self.score)
                     self.delete(0, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[0][i]) > 15 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
+                    self.score += 30
+                    self.countscore = str(self.score)
                     self.delete(0, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[0][i]) > 50 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
+                    self.score += 10
+                    self.countscore = str(self.score)
                     self.delete(0, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[0][i]) > 100 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.countscore = str(self.score)
                     self.delete(0, i)  # delete
 
             if keycode[1] == 'f':
                 if self.move_y+(self.dist*self.melody_comp[1][i]) > 0 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
+                    self.score += 50
+                    self.countscore = str(self.score)
                     self.delete(1, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[1][i]) > 15 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
+                    self.score += 30
+                    self.countscore = str(self.score)
                     self.delete(1, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[1][i]) > 50 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
+                    self.score += 10
+                    self.countscore = str(self.score)
                     self.delete(1, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[1][i]) > 100 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.countscore = str(self.score)
                     self.delete(1, i)  # delete
 
             if keycode[1] == 'j':
                 if self.move_y+(self.dist*self.melody_comp[2][i]) > 0 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
+                    self.score += 50
+                    self.countscore = str(self.score)
                     self.delete(2, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[2][i]) > 15 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
+                    self.score += 30
+                    self.countscore = str(self.score)
                     self.delete(2, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[2][i]) > 50 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
+                    self.score += 10
+                    self.countscore = str(self.score)
                     self.delete(2, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[2][i]) > 100 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.countscore = str(self.score)
                     self.delete(2, i)  # delete
 
             if keycode[1] == 'k':
                 if self.move_y+(self.dist*self.melody_comp[3][i]) > 0 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
+                    self.score += 50
+                    self.countscore = str(self.score)
                     self.delete(3, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[3][i]) > 15 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
+                    self.score += 30
+                    self.countscore = str(self.score)
                     self.delete(3, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[3][i]) > 50 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
+                    self.score += 10
+                    self.countscore = str(self.score)
                     self.delete(3, i)  # delete
                 elif self.move_y+(self.dist*self.melody_comp[3][i]) > 100 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.countscore = str(self.score)
                     self.delete(3, i)  # delete
 
     # ゲーム画面右下のStartボタンが押された時に実行される処理
