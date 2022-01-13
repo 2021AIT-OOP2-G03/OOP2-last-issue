@@ -114,42 +114,9 @@ class HomeScreen(Screen):
     def select_game(self, music_name, level):
         PlayScreen.music_name = music_name
         PlayScreen.level = level
-
-    def High_Score(self, arg):
-        # 押されたラベルの難易度を格納
-        self.level = arg
-
-        sorted_score = []
-
-        # 接続処理, カーソルオブジェクトを取得
-        con = sqlite3.connect('score.db')
-        cur = con.cursor()
-
-        sql = 'insert into oop2-last-issue values(?,?,score)', [
-            self.music_name, self.level]
-        # 仮実装、曲名と難易度、スコアを挿入
-        cur.execute(sql)
-        cur.commit()
-
-        # スコアのソーティング
-        sort = 'select * from "oop2-last-issue" order by score desc where music_name=? and mode=?', [
-            self.music_name, self.level]
-        cur.execute(sort)
-
-        # ソートしたデータをsorted_scoreに格納
-        for data in cur:
-            sorted_score.append(data)
-
-        # game.kvで使用する変数, 最高スコアの格納
-        for score in sorted_score:
-            if score > self.first_score:
-                self.first_score = str(score[0][0])
-            elif score > self.second_score and score < self.first_score:
-                self.second_score = str(score[1][0])
-            elif score > self.third_score and score < self.second_score:
-                self.third_score = str(score[2][0])
-        # クローズ
-        con.close()
+        PlayScreen.first_score = self.first_score
+        PlayScreen.second_score = self.second_score
+        PlayScreen.third_score = self.third_score
 
 
 class PlayScreen(Screen):
@@ -221,6 +188,11 @@ class PlayScreen(Screen):
     level = ''
     score = 0  # 合計スコア
 
+    first_score = 0
+    second_score = 0
+    third_score = 0
+    # 順位判定用
+
     rect = []
 
     def __init__(self, **kw):
@@ -273,12 +245,15 @@ class PlayScreen(Screen):
                 self.rect[col][self.melody_comp[col][row]].pos = 200 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
 
-            for i in range(0,2):
-                for j in range(0,4):
-                #スルー判定
-                    if self.move_y+(self.dist*self.melody_comp[j][i]) == -150: #スルー判定をするy座標 
-                        #self.miss = 全体のノーツ数　ー　(excellentの数 + greatの数 + goodの数 + missの数)                     
-                        self.miss = self.n*2 - (int(self.countexcellent) + int(self.countgreat)+ int(self.countgood)) 
+            for i in range(0, 2):
+                for j in range(0, 4):
+                    # スルー判定
+                    # スルー判定をするy座標
+                    if self.move_y+(self.dist*self.melody_comp[j][i]) == -150:
+                        # self.miss = 全体のノーツ数　ー　(excellentの数 + greatの数 + goodの数 + missの数)
+                        self.miss = self.n*2 - \
+                            (int(self.countexcellent) +
+                             int(self.countgreat) + int(self.countgood))
 
                         self.countmiss = str(self.miss)
 
@@ -480,6 +455,43 @@ class PlayScreen(Screen):
     ノーツをぶっ飛ばす方法。これだと列全体が下に下がってダメになってしまう。
         #self.move_y = self.move_y+100*(i+3*0) - 500
     """
+
+    def High_Score(self):
+        # 押されたラベルの難易度を格納
+        sorted_score = []
+
+        # 接続処理, カーソルオブジェクトを取得
+        con = sqlite3.connect('score.db')
+        cur = con.cursor()
+
+        sql = 'insert into "oop2-last-issue" values(?,?,?)', [
+            self.music_name, self.level, self.score]
+        # 仮実装、曲名と難易度、スコアを挿入
+        cur.execute(sql)
+        cur.commit()
+
+        # スコアのソーティング
+        sort = 'select * from "oop2-last-issue" order by score desc where music_name =? and mode =? limit 3', [
+            self.music_name, self.level]
+        cur.execute(sort)
+
+        # ソートしたデータをsorted_scoreに格納
+        for data in cur:
+            sorted_score.append(data)
+
+        # game.kvで使用する変数, 最高スコアの格納
+        for final_score in sorted_score:
+            if final_score > self.first_score:
+                self.first_score = str(final_score[0][0])
+                HomeScreen.first_score = self.first_score
+            elif final_score > self.second_score and final_score < self.first_score:
+                self.second_score = str(final_score[1][0])
+                HomeScreen.second_score = self.second_score
+            elif final_score > self.third_score and final_score < self.second_score:
+                self.third_score = str(final_score[2][0])
+                HomeScreen.third_score = self.third_score
+        # クローズ
+        con.close()
 
 
 sm = ScreenManager()
