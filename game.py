@@ -259,8 +259,7 @@ class PlayScreen(Screen):
 
         # y軸上のノーツの位置を更新
         self.move_y -= self.dy
-        print(self.move_y)
-
+        # print(self.move_y)
         for col in range(len(self.melody_comp)):
             # ノーツの描画
             # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))].pos =
@@ -271,18 +270,20 @@ class PlayScreen(Screen):
                 self.rect[col][self.melody_comp[col][row]].pos = 200 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
 
-        # print(self.rect[0][0].pos, self.rect[3][3].pos) # 任意のノーツの座標の流れを確認できる(デバッグ用)
+        # 任意のノーツの座標の流れを確認できる(デバッグ用)
+        # print(self.rect[0][0].pos, self.rect[3][3].pos)
 
-            # コンフリクトが起きていたため片方コメントアウトしました。
-            '''
+        # コンフリクトが起きていたため片方コメントアウトしました。
+            # print(self.move_y+(self.dist*self.melody_comp[col][1]))
+        '''
             self.rect[l][0+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(0+3*l)
             self.rect[l][2+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(2+3*l)
             self.rect[l][4+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(4+3*l)
-            
+
             #print(self.move_y+100*(0+3*0))
             #print(self.move_y+100*(2+3*l))
             #print(self.move_y+100*(4+3*l))
-            '''
+        '''
 
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
@@ -290,62 +291,78 @@ class PlayScreen(Screen):
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         # dfjkのキーボードを使う
-        for i in range(0, self.n+1, 2):
+        for i in range(0, 2):
             if keycode[1] == 'd':
-                if self.move_y+100*(i+3*0) > 0 and self.move_y+100*(i+3*0) <= 15:
+                if self.move_y+(self.dist*self.melody_comp[0][i]) > 0 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
-                elif self.move_y+100*(i+3*0) > 15 and self.move_y+100*(i+3*0) <= 50:
+                    self.delete(0, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[0][i]) > 15 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
-                elif self.move_y+100*(i+3*0) > 50 and self.move_y+100*(i+3*0) <= 100:
+                    self.delete(0, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[0][i]) > 50 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
-                elif self.move_y+100*(i+3*0) > 100 and self.move_y+100*(i+3*0) <= 125:
+                    self.delete(0, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[0][i]) > 100 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.delete(0, i)  # delete
 
             if keycode[1] == 'f':
-                if self.move_y+100*(i+3*1) > 0 and self.move_y+100*(i+3*1) <= 15:
+                if self.move_y+(self.dist*self.melody_comp[1][i]) > 0 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
-                elif self.move_y+100*(i+3*1) > 15 and self.move_y+100*(i+3*1) <= 50:
+                    self.delete(1, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[1][i]) > 15 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
-                elif self.move_y+100*(i+3*1) > 50 and self.move_y+100*(i+3*1) <= 100:
+                    self.delete(1, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[1][i]) > 50 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
-                elif self.move_y+100*(i+3*1) > 100 and self.move_y+100*(i+3*1) <= 125:
+                    self.delete(1, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[1][i]) > 100 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.delete(1, i)  # delete
 
             if keycode[1] == 'j':
-                if self.move_y+100*(i+3*2) > 0 and self.move_y+100*(i+3*2) <= 15:
+                if self.move_y+(self.dist*self.melody_comp[2][i]) > 0 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
-                elif self.move_y+100*(i+3*2) > 15 and self.move_y+100*(i+3*2) <= 50:
+                    self.delete(2, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[2][i]) > 15 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
-                elif self.move_y+100*(i+3*2) > 50 and self.move_y+100*(i+3*2) <= 100:
+                    self.delete(2, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[2][i]) > 50 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
-                elif self.move_y+100*(i+3*2) > 100 and self.move_y+100*(i+3*2) <= 125:
+                    self.delete(2, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[2][i]) > 100 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.delete(2, i)  # delete
 
             if keycode[1] == 'k':
-                if self.move_y+100*(i+3*3) > 0 and self.move_y+100*(i+3*3) <= 15:
+                if self.move_y+(self.dist*self.melody_comp[3][i]) > 0 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 15:
                     self.excellent += 1
                     self.countexcellent = str(self.excellent)
-                elif self.move_y+100*(i+3*3) > 15 and self.move_y+100*(i+3*3) <= 50:
+                    self.delete(3, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[3][i]) > 15 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 50:
                     self.great += 1
                     self.countgreat = str(self.great)
-                elif self.move_y+100*(i+3*3) > 50 and self.move_y+100*(i+3*3) <= 100:
+                    self.delete(3, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[3][i]) > 50 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 100:
                     self.good += 1
                     self.countgood = str(self.good)
-                elif self.move_y+100*(i+3*3) > 100 and self.move_y+100*(i+3*3) <= 125:
+                    self.delete(3, i)  # delete
+                elif self.move_y+(self.dist*self.melody_comp[3][i]) > 100 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 125:
                     self.miss += 1
                     self.countmiss = str(self.miss)
+                    self.delete(3, i)  # delete
 
     # ゲーム画面右下のStartボタンが押された時に実行される処理
     def start_game(self):
@@ -382,7 +399,8 @@ class PlayScreen(Screen):
                     # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))] =
                     # Rectangle(pos=(200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
                     # 　　　　　　self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当))),
-                    # 　　　　　　size=(200,100)(=ノーツの縦と横の長さ))
+                    # size=(200,100)(=ノーツの縦と横の長さ))
+                    # self.rect[col(=レーン番号)][row(=行)]
                     if self.melody[col][row] == 1:
                         # self.rect.append(Rectangle(pos=(width*col,self.move_y),size=(width,100)))
                         self.rect[col][row] = Rectangle(
@@ -403,6 +421,25 @@ class PlayScreen(Screen):
 
             # update関数を一秒間に1/dt回の周期で実行
             Clock.schedule_interval(self.update, self.dt)
+
+    # ノーツを消す処理
+    def delete(self, row, number):
+        # 当たり判定があった時にノーツを消します。
+        # ノーツを消すことのよって多重判定を回避します。
+        # row=レーン番号　number=行の数　※ここの引数は基本的にノーツの描画と同じものになっています。
+        # print('ok')
+        self.canvas.remove(
+            self.rect[row][self.melody_comp[row][number]])
+
+    """ 
+        作業時メモ
+    
+    下のコードだとノーツが止まる
+        self.rect[0][i+3*0] = Rectangle(pos=(0,self.move_y-100),size=(0,0))
+                    
+    ノーツをぶっ飛ばす方法。これだと列全体が下に下がってダメになってしまう。
+        #self.move_y = self.move_y+100*(i+3*0) - 500
+    """
 
 
 sm = ScreenManager()
