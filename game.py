@@ -291,7 +291,7 @@ class PlayScreen(Screen):
                 最初のノーツが通り過ぎた時点で曲全体のノーツ数を入れて成功するたびにミスの数がヘル仕様になっています
                 ここの部分に関してはもっといい方法があれば教えてほしいです…
                 """
-                if self.move_y+100*(i+3*l) == -150: #スルー判定をするy座標 
+                if self.move_y+100*(i+3*row) == -150: #スルー判定をするy座標 
                     #self.miss = 全体のノーツ数　ー　(excellentの数 + greatの数 + goodの数)                      
                     self.miss = self.n*3 - (int(self.countexcellent) + int(self.countgreat)+ int(self.countgood)) 
                     self.countmiss = str(self.miss)
@@ -306,6 +306,11 @@ class PlayScreen(Screen):
         #dfjkのキーボードを使う
         #判定場所になります。y座標が0〜15でexcellent、16〜50でgreat、51〜100でgood、100〜125でmiss、それ以外は反応しないようになっています。
         #多重反応を防ぐためにノーツを消す処理を行なっています。deleteを呼び出すことでノーツを削除しています。
+        
+        excellent = 15
+        good = 50
+        bad = 100
+        
         for i in range(0,self.n+1,2):
             if keycode[1] == 'd':
                 if self.move_y+100*(i+3*0) > 0 and self.move_y+100*(i+3*0) <= 15:
@@ -448,10 +453,6 @@ class PlayScreen(Screen):
                         # それぞれのレーンで音符が合った座標を追加する
                         self.melody_comp[col].append(row)
                         # print(col, row, self.rect[col][row].pos) # 音符のある座標を出力する(デバッグ用)
-
-                    # self.rect[l][0+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(0+3*l)),size=(200,100))
-                    # self.rect[l][2+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(2+3*l)),size=(200,100))
-                    # self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
             # print(self.melody_comp) # melody_compの結果を出力する(デバッグ用)
 
         # 曲が無事ロードされていれば曲を流す
