@@ -195,6 +195,7 @@ class PlayScreen(Screen):
     countgreat = StringProperty('0')
     countexcellent = StringProperty('0')
     countmiss = StringProperty('0')
+    countbad = StringProperty('0')
     good = 0  # goodが出た回数のカウント
     great = 0  # greatが出た回数のカウント
     excellent = 0  # excellentが出た回数のカウント
@@ -272,15 +273,13 @@ class PlayScreen(Screen):
                 self.rect[col][self.melody_comp[col][row]].pos = 200 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
 
-            for i in range(0, 2):
-                for j in range(0, 4):
-                    # スルー判定
-                    # スルー判定をするy座標
-                    if self.move_y+(self.dist*self.melody_comp[j][i]) == -150:
-                        # self.miss = 全体のノーツ数　ー　(excellentの数 + greatの数 + goodの数 + missの数)
-                        self.miss = self.n*2 - \
-                            (int(self.countexcellent) +
-                             int(self.countgreat) + int(self.countgood))
+            for i in range(0,2):
+                for j in range(0,4):
+                #スルー判定
+                    if self.move_y+(self.dist*self.melody_comp[j][i]) == -150: #スルー判定をするy座標 
+                        #self.miss = 全体のノーツ数　ー　(excellentの数 + greatの数 + goodの数 + missの数)                     
+                        self.miss = self.n*2 - (int(self.countexcellent) + int(self.countgreat)+ int(self.countgood)) 
+
                         self.countmiss = str(self.miss)
 
         # 任意のノーツの座標の流れを確認できる(デバッグ用)
@@ -288,7 +287,7 @@ class PlayScreen(Screen):
 
         # コンフリクトが起きていたため片方コメントアウトしました。
             # print(self.move_y+(self.dist*self.melody_comp[col][1]))
-        '''
+        ''' 
             self.rect[l][0+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(0+3*l)
             self.rect[l][2+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(2+3*l)
             self.rect[l][4+3*l].pos = 200*l+5*(l-1) ,self.move_y+100*(4+3*l)
