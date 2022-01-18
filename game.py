@@ -435,7 +435,19 @@ class PlayScreen(Screen):
             self.sound.play()
 
             # update関数を一秒間に1/dt回の周期で実行
-            Clock.schedule_interval(self.update, self.dt)
+            self.event = Clock.schedule_interval(self.update, self.dt)
+
+    # ゲーム画面右下のBackボタンが押された時に実行される処理
+    def end_game(self):
+        # 音楽が再生されていれば
+        if self.sound:
+            #  音を止める
+            self.sound.stop()
+
+            # Clockを停止させる
+            self.event.cancel()
+        
+        self.High_Score
 
     # ノーツを消す処理
     def delete(self, row, number):
