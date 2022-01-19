@@ -1,3 +1,4 @@
+from select import select
 from kivy.app import App
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -152,6 +153,8 @@ class PlayScreen(Screen):
     def __init__(self, **kw):
         super().__init__(**kw)
     '''
+
+    startisEnable = False
 
     dt = 1/30  # フレーム周期
     move_y = NumericProperty(1000)  # ノーツのy軸上の位置
@@ -437,6 +440,7 @@ class PlayScreen(Screen):
             # update関数を一秒間に1/dt回の周期で実行
             self.event = Clock.schedule_interval(self.update, self.dt)
 
+
     # ゲーム画面右下のBackボタンが押された時に実行される処理
     def end_game(self):
         # 音楽が再生されていれば
@@ -447,6 +451,10 @@ class PlayScreen(Screen):
             # Clockを停止させる
             self.event.cancel()
         
+        # Startボタンのテキストを元に戻す
+        self.text = "Start"
+        
+        # ハイスコアを更新
         self.High_Score
 
     # ノーツを消す処理
