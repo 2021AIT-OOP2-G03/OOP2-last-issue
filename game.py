@@ -105,7 +105,7 @@ class HomeScreen(Screen):
         # 取得したデータをscoreに格納
         for data in cur:
             score.append(data)
-            print(score)
+            # print(score)
 
         # game.kvで使用する変数に格納
         self.first_score = str(score[0][0])
@@ -474,7 +474,7 @@ class PlayScreen(Screen):
     """
 
     def High_Score(self):
-        print(self.music_name, self.level, self.score)
+        # print(self.music_name, self.level, self.score)
         # 押されたラベルの難易度を格納
 
         # 接続処理, カーソルオブジェクトを取得
