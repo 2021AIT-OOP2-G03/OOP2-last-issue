@@ -1,3 +1,4 @@
+from select import select
 from kivy.app import App
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -158,6 +159,8 @@ class PlayScreen(Screen):
         super().__init__(**kw)
     '''
 
+    startisEnable = False
+
     dt = 1/30  # フレーム周期
     move_y = NumericProperty(1000)  # ノーツのy軸上の位置
     text = StringProperty('Start')
@@ -188,7 +191,7 @@ class PlayScreen(Screen):
         [0,0,0,1,0,0,0,1],         [3,7],
     ]                           ]
     '''
-    
+
     # HomeScreen().select_gameから選択される曲名と難易度
     music_name = ''
     level = ''
@@ -215,7 +218,6 @@ class PlayScreen(Screen):
             # レーンの限界幅及び、音符の限界長さを指定する
             self.limit_col = 6  # レーン幅
             self.limit_row = 5000
-            
 
             # ノーツを入れる二次元配列の初期設定
 
@@ -237,22 +239,21 @@ class PlayScreen(Screen):
                 self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
             '''
 
-
     def goukeinotes(self):
         count = 0
         for i in range(self.n):
             count += len(self.melody_comp[i])
-        self.goukei_notes = count  
+        self.goukei_notes = count
         return self.goukei_notes
-        
-        
+
     def update(self, *args):
         # y軸上のノーツの位置を更新
         self.move_y -= self.dy
+
         # print(self.move_y)
-        #print(self.goukeinotes())
+        # print(self.goukeinotes())
         for col in range(len(self.melody_comp)):
-          
+
             # ノーツの描画
             # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))].pos =
             # 200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
@@ -261,7 +262,6 @@ class PlayScreen(Screen):
             for row in range(len(self.melody_comp[col])):
                 self.rect[col][self.melody_comp[col][row]].pos = 200 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
-
 
         # 任意のノーツの座標の流れを確認できる(デバッグ用)
         # print(self.rect[0][0].pos, self.rect[3][3].pos)
@@ -277,7 +277,7 @@ class PlayScreen(Screen):
             #print(self.move_y+100*(2+3*l))
             #print(self.move_y+100*(4+3*l))
         '''
-        
+
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
@@ -361,7 +361,7 @@ class PlayScreen(Screen):
                     self.countmiss = str(self.miss)
                     self.countscore = str(self.score)
                     self.delete(2, i)  # delete
-                    
+
         for i in range(len(self.melody_comp[3])):
             if keycode[1] == 'k':
                 if self.move_y+(self.dist*self.melody_comp[3][i]) > 0 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 15:
@@ -411,7 +411,7 @@ class PlayScreen(Screen):
         print(self.music_name, self.level)
         print(self.dt, self.dy, self.dist, self.music_sound_url)
         print(self.n, self.m)
-        
+
         with self.canvas:
             # ノーツの色設定
             Color(1, 0, 0, 5, 1)
@@ -437,7 +437,7 @@ class PlayScreen(Screen):
                     # self.rect[l][0+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(0+3*l)),size=(200,100))
                     # self.rect[l][2+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(2+3*l)),size=(200,100))
                     # self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
-            # print(self.melody_comp) # melody_compの結果を出力する(デバッグ用)
+            print(self.melody_comp)  # melody_compの結果を出力する(デバッグ用)
 
         # 曲が無事ロードされていれば曲を流す
         if self.sound:
@@ -447,6 +447,7 @@ class PlayScreen(Screen):
             self.event = Clock.schedule_interval(self.update, self.dt)
 
     # ゲーム画面右下のBackボタンが押された時に実行される処理
+
     def end_game(self):
         # 音楽が再生されていれば
         if self.sound:
@@ -456,9 +457,33 @@ class PlayScreen(Screen):
             # Clockを停止させる
             self.event.cancel()
 
+        # Startボタンのテキストを元に戻す
+        self.text = "Start"
+
+        # self.rect = [[Rectangle(pos=(0, 0), size=(0, 0)) for row in range(
+        #         self.limit_row)] for col in range(self.limit_col)]
+
+        for col in range(len(self.melody_comp)):
+            for row in range(len(self.melody_comp[col])):
+                # self.rect[col][row] = Rectangle(pos=(0, 0), size=(0, 0))
+                self.rect[col][row].size = 0, 0
+                self.delete(col, row)
+
+        # for i in range(0, 2):
+        #         for j in range(0, 4):
+        #             if self.move_y+(self.dist*self.melody_comp[j][i]) > -150:
+        #                 self.delete(j, i)
+
+        # ハイスコアを更新
         self.High_Score()
 
+        # まずはmelody_comp関数をクリア
+        self.melody_comp.clear()
+
+        self.move_y = 1000
+
     # ノーツを消す処理
+
     def delete(self, row, number):
         # 当たり判定があった時にノーツを消します。
         # ノーツを消すことのよって多重判定を回避します。
@@ -519,7 +544,21 @@ class PlayScreen(Screen):
     def popup_close(self):
         self.popup.dismiss()
         self.end_game()
+        self.refresh()
         self.manager.current = 'home'
+
+    def refresh(self):
+        self.score = 0
+        self.excellent = 0
+        self.great = 0
+        self.good = 0
+        self.miss = 0
+
+        self.countscore = str(self.score)
+        self.countexcellent = str(self.excellent)
+        self.countgreat = str(self.great)
+        self.countgood = str(self.good)
+        self.countmiss = str(self.miss)
 
 
 class PopupMenu(BoxLayout):
