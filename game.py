@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 
 from kivy.graphics import *
@@ -9,10 +10,13 @@ from kivy.core.window import Window
 from kivy.uix.widget import Widget
 from kivy.properties import StringProperty
 from kivy.properties import NumericProperty
+from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 from kivy.core.audio import SoundLoader
 from kivy.uix.label import Label
 from kivy.uix.scatter import Scatter
+
+from kivy.uix.popup import Popup
 
 import sqlite3
 import music_list
@@ -472,7 +476,6 @@ class PlayScreen(Screen):
     def High_Score(self):
         print(self.music_name, self.level, self.score)
         # 押されたラベルの難易度を格納
-        sorted_score = []
 
         # 接続処理, カーソルオブジェクトを取得
         con = sqlite3.connect('score.db')
@@ -488,27 +491,37 @@ class PlayScreen(Screen):
         cur.execute('select * from "oop2-last-issue" where music_name =? and mode =? order by score desc limit 3', [
             self.music_name, self.level])
 
-        # ソートしたデータをsorted_scoreに格納
-        for data in cur:
-            sorted_score.append(data)
-        #print(sorted_score[0][2], sorted_score[1][2], sorted_score[2][2])
-        first = sorted_score[0][2]
-        second = sorted_score[1][2]
-        third = sorted_score[2][2]
-        # 値格納、タプルだったので取り出し
-
-        # game.kvで使用する変数, 最高スコアの格納
-        if first > int(self.first_score):
-            self.first_score = str(first)
-            HomeScreen.first_score = int(self.first_score)
-        elif second > int(self.second_score) and first < int(self.first_score):
-            self.second_score = str(second)
-            HomeScreen.second_score = self.second_score
-        elif third > int(self.third_score) and second < int(self.second_score):
-            self.third_score = str(third)
-            HomeScreen.third_score = self.third_score
         # クローズ
         con.close()
+
+    def popup_open(self):
+        PopupMenu.score = self.score
+        self.popup_result()
+        content = PopupMenu(popup_close=self.popup_close)
+        self.popup = Popup(title='Result', content=content,
+                           size_hint=(0.5, 0.5), auto_dismiss=False)
+        self.popup.open()
+
+    def popup_result(self):
+        if int(self.score) > int(self.first_score):
+            PopupMenu.result = 'Congratulations!\nYou got a 1st Place!'
+        elif int(self.score) > int(self.second_score) and int(self.score) < int(self.first_score):
+            PopupMenu.result = 'Congratulations!\nYou got a 2nd Place!'
+        elif int(self.score) > int(self.third_score) and int(self.score) < int(self.second_score):
+            PopupMenu.result = 'Congratulations!\nYou got a 3rd Place!'
+        else:
+            PopupMenu.result = 'You did not enter the top 3 scores,\nbut nice job! Try better next time!'
+
+    def popup_close(self):
+        self.popup.dismiss()
+        self.end_game()
+        self.manager.current = 'home'
+
+
+class PopupMenu(BoxLayout):
+    score = 0
+    result = ''
+    popup_close = ObjectProperty()
 
 
 sm = ScreenManager()

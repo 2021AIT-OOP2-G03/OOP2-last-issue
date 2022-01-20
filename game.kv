@@ -1,5 +1,3 @@
-
-
 <HomeScreen>:
     orientation: 'vertical'
     BoxLayout:
@@ -135,6 +133,14 @@
                 text: 'Back'
                 font_size: 40
                 size_hint_y: 1/3
-                on_press: 
-                    root.end_game()
-                    root.manager.current = 'home'
+                on_press: root.popup_open()
+<PopupMenu>:
+    orientation: 'vertical'
+
+    Label:
+        text: 'score:' + str(root.score)
+    Label:
+        text: root.result
+    Button:
+        text: 'Go to Home'
+        on_press: root.popup_close()
