@@ -1,3 +1,4 @@
+from select import select
 from kivy.app import App
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -158,6 +159,8 @@ class PlayScreen(Screen):
         super().__init__(**kw)
     '''
 
+    startisEnable = False
+
     dt = 1/30  # フレーム周期
     move_y = NumericProperty(1000)  # ノーツのy軸上の位置
     text = StringProperty('Start')
@@ -249,6 +252,7 @@ class PlayScreen(Screen):
     def update(self, *args):
         # y軸上のノーツの位置を更新
         self.move_y -= self.dy
+
         # print(self.move_y)
         #print(self.goukeinotes())
         for col in range(len(self.melody_comp)):
@@ -437,7 +441,7 @@ class PlayScreen(Screen):
                     # self.rect[l][0+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(0+3*l)),size=(200,100))
                     # self.rect[l][2+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(2+3*l)),size=(200,100))
                     # self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
-            # print(self.melody_comp) # melody_compの結果を出力する(デバッグ用)
+            print(self.melody_comp) # melody_compの結果を出力する(デバッグ用)
 
         # 曲が無事ロードされていれば曲を流す
         if self.sound:
@@ -445,6 +449,7 @@ class PlayScreen(Screen):
 
             # update関数を一秒間に1/dt回の周期で実行
             self.event = Clock.schedule_interval(self.update, self.dt)
+
 
     # ゲーム画面右下のBackボタンが押された時に実行される処理
     def end_game(self):
@@ -455,8 +460,35 @@ class PlayScreen(Screen):
 
             # Clockを停止させる
             self.event.cancel()
+        
+        # Startボタンのテキストを元に戻す
+        self.text = "Start"
+       
+        
+        # self.rect = [[Rectangle(pos=(0, 0), size=(0, 0)) for row in range(
+        #         self.limit_row)] for col in range(self.limit_col)]
 
-        self.High_Score()
+        for col in range(len(self.melody_comp)):
+            for row in range(len(self.melody_comp[col])):
+                # self.rect[col][row] = Rectangle(pos=(0, 0), size=(0, 0))
+                self.rect[col][row].size=0,0
+                self.delete(col,row)
+
+
+        # for i in range(0, 2):
+        #         for j in range(0, 4):
+        #             if self.move_y+(self.dist*self.melody_comp[j][i]) > -150:
+        #                 self.delete(j, i)
+
+        # ハイスコアを更新
+        self.High_Score
+
+        # まずはmelody_comp関数をクリア
+        self.melody_comp.clear()
+
+        self.move_y = 1000
+
+
 
     # ノーツを消す処理
     def delete(self, row, number):
