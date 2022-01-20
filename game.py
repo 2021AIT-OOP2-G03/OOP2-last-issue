@@ -463,7 +463,23 @@ class PlayScreen(Screen):
         
         # Startボタンのテキストを元に戻す
         self.text = "Start"
+       
         
+        # self.rect = [[Rectangle(pos=(0, 0), size=(0, 0)) for row in range(
+        #         self.limit_row)] for col in range(self.limit_col)]
+
+        for col in range(len(self.melody_comp)):
+            for row in range(len(self.melody_comp[col])):
+                # self.rect[col][row] = Rectangle(pos=(0, 0), size=(0, 0))
+                self.rect[col][row].size=0,0
+                self.delete(col,row)
+
+
+        # for i in range(0, 2):
+        #         for j in range(0, 4):
+        #             if self.move_y+(self.dist*self.melody_comp[j][i]) > -150:
+        #                 self.delete(j, i)
+
         # ハイスコアを更新
         self.High_Score
 
@@ -472,20 +488,6 @@ class PlayScreen(Screen):
 
         self.move_y = 1000
 
-        # self.rect = [[Rectangle(pos=(0, 0), size=(0, 0)) for row in range(
-        #         self.limit_row)] for col in range(self.limit_col)]
-
-        for col in range(len(self.melody_comp)):
-            for row in range(len(self.melody_comp[col])):
-                # self.rect[col][row] = Rectangle(pos=(0, 0), size=(0, 0))
-                self.rect[col][row].size=0,0
-                self.delete(col, row)
-
-
-        # for i in range(0, 2):
-        #         for j in range(0, 4):
-        #             if self.move_y+(self.dist*self.melody_comp[j][i]) > -150:
-        #                 self.delete(j, i)
 
 
     # ノーツを消す処理
