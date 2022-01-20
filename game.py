@@ -238,6 +238,7 @@ class PlayScreen(Screen):
 
         # y軸上のノーツの位置を更新
         self.move_y -= self.dy
+
         # print(self.move_y)
         for col in range(len(self.melody_comp)):
             # ノーツの描画
@@ -432,7 +433,7 @@ class PlayScreen(Screen):
                     # self.rect[l][0+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(0+3*l)),size=(200,100))
                     # self.rect[l][2+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(2+3*l)),size=(200,100))
                     # self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
-            # print(self.melody_comp) # melody_compの結果を出力する(デバッグ用)
+            print(self.melody_comp) # melody_compの結果を出力する(デバッグ用)
 
         # 曲が無事ロードされていれば曲を流す
         if self.sound:
@@ -457,6 +458,27 @@ class PlayScreen(Screen):
         
         # ハイスコアを更新
         self.High_Score
+
+        # まずはmelody_comp関数をクリア
+        self.melody_comp.clear()
+
+        self.move_y = 1000
+
+        # self.rect = [[Rectangle(pos=(0, 0), size=(0, 0)) for row in range(
+        #         self.limit_row)] for col in range(self.limit_col)]
+
+        for col in range(len(self.melody_comp)):
+            for row in range(len(self.melody_comp[col])):
+                # self.rect[col][row] = Rectangle(pos=(0, 0), size=(0, 0))
+                self.rect[col][row].size=0,0
+                self.delete(col, row)
+
+
+        # for i in range(0, 2):
+        #         for j in range(0, 4):
+        #             if self.move_y+(self.dist*self.melody_comp[j][i]) > -150:
+        #                 self.delete(j, i)
+
 
     # ノーツを消す処理
     def delete(self, row, number):
