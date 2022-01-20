@@ -101,6 +101,7 @@ class HomeScreen(Screen):
         # 取得したデータをscoreに格納
         for data in cur:
             score.append(data)
+            print(score)
 
         # game.kvで使用する変数に格納
         self.first_score = str(score[0][0])
@@ -447,7 +448,7 @@ class PlayScreen(Screen):
             # Clockを停止させる
             self.event.cancel()
 
-        self.High_Score
+        self.High_Score()
 
     # ノーツを消す処理
     def delete(self, row, number):
@@ -494,7 +495,7 @@ class PlayScreen(Screen):
         first = sorted_score[0][2]
         second = sorted_score[1][2]
         third = sorted_score[2][2]
-        #値格納、タプルだったので取り出し
+        # 値格納、タプルだったので取り出し
 
         # game.kvで使用する変数, 最高スコアの格納
         if first > int(self.first_score):
