@@ -2,6 +2,7 @@ from select import select
 from kivy.app import App
 from kivymd.app import MDApp
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 
 from kivy.graphics import *
@@ -10,10 +11,13 @@ from kivy.core.window import Window
 from kivy.uix.widget import Widget
 from kivy.properties import StringProperty
 from kivy.properties import NumericProperty
+from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 from kivy.core.audio import SoundLoader
 from kivy.uix.label import Label
 from kivy.uix.scatter import Scatter
+
+from kivy.uix.popup import Popup
 
 import sqlite3
 import music_list
@@ -102,7 +106,7 @@ class HomeScreen(Screen):
         # 取得したデータをscoreに格納
         for data in cur:
             score.append(data)
-            print(score)
+            # print(score)
 
         # game.kvで使用する変数に格納
         self.first_score = str(score[0][0])
@@ -187,6 +191,7 @@ class PlayScreen(Screen):
         [0,0,0,1,0,0,0,1],         [3,7],
     ]                           ]
     '''
+    
     # HomeScreen().select_gameから選択される曲名と難易度
     music_name = ''
     level = ''
@@ -213,6 +218,7 @@ class PlayScreen(Screen):
             # レーンの限界幅及び、音符の限界長さを指定する
             self.limit_col = 6  # レーン幅
             self.limit_row = 5000
+            
 
             # ノーツを入れる二次元配列の初期設定
 
@@ -234,13 +240,23 @@ class PlayScreen(Screen):
                 self.rect[l][4+3*l] = Rectangle(pos=(200*l+5*(l-1) ,self.move_y+100*(4+3*l)),size=(200,100))
             '''
 
-    def update(self, *args):
 
+    def goukeinotes(self):
+        count = 0
+        for i in range(self.n):
+            count += len(self.melody_comp[i])
+        self.goukei_notes = count  
+        return self.goukei_notes
+        
+        
+    def update(self, *args):
         # y軸上のノーツの位置を更新
         self.move_y -= self.dy
 
         # print(self.move_y)
+        #print(self.goukeinotes())
         for col in range(len(self.melody_comp)):
+          
             # ノーツの描画
             # self.rect[l(=レーン番号)][0(=行の数)+3*l(=テストプログラム用の数(適当))].pos =
             # 200(=ノーツの横の長さ)*l(=レーンの数)+5*(l-1)(=レーンとレーンの隙間(5)) ,
@@ -250,17 +266,6 @@ class PlayScreen(Screen):
                 self.rect[col][self.melody_comp[col][row]].pos = 200 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
 
-            for i in range(0, 2):
-                for j in range(0, 4):
-                    # スルー判定
-                    # スルー判定をするy座標
-                    if self.move_y+(self.dist*self.melody_comp[j][i]) == -150:
-                        # self.miss = 全体のノーツ数　ー　(excellentの数 + greatの数 + goodの数 + missの数)
-                        self.miss = self.n*2 - \
-                            (int(self.countexcellent) +
-                             int(self.countgreat) + int(self.countgood))
-
-                        self.countmiss = str(self.miss)
 
         # 任意のノーツの座標の流れを確認できる(デバッグ用)
         # print(self.rect[0][0].pos, self.rect[3][3].pos)
@@ -276,14 +281,14 @@ class PlayScreen(Screen):
             #print(self.move_y+100*(2+3*l))
             #print(self.move_y+100*(4+3*l))
         '''
-
+        
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
         self._keyboard = None
 
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         # dfjkのキーボードを使う
-        for i in range(0, 2):
+        for i in range(len(self.melody_comp[0])):
             if keycode[1] == 'd':
                 if self.move_y+(self.dist*self.melody_comp[0][i]) > 0 and self.move_y+(self.dist*self.melody_comp[0][i]) <= 15:
                     self.excellent += 1
@@ -309,6 +314,7 @@ class PlayScreen(Screen):
                     self.countscore = str(self.score)
                     self.delete(0, i)  # delete
 
+        for i in range(len(self.melody_comp[1])):
             if keycode[1] == 'f':
                 if self.move_y+(self.dist*self.melody_comp[1][i]) > 0 and self.move_y+(self.dist*self.melody_comp[1][i]) <= 15:
                     self.excellent += 1
@@ -334,6 +340,7 @@ class PlayScreen(Screen):
                     self.countscore = str(self.score)
                     self.delete(1, i)  # delete
 
+        for i in range(len(self.melody_comp[2])):
             if keycode[1] == 'j':
                 if self.move_y+(self.dist*self.melody_comp[2][i]) > 0 and self.move_y+(self.dist*self.melody_comp[2][i]) <= 15:
                     self.excellent += 1
@@ -358,7 +365,8 @@ class PlayScreen(Screen):
                     self.countmiss = str(self.miss)
                     self.countscore = str(self.score)
                     self.delete(2, i)  # delete
-
+                    
+        for i in range(len(self.melody_comp[3])):
             if keycode[1] == 'k':
                 if self.move_y+(self.dist*self.melody_comp[3][i]) > 0 and self.move_y+(self.dist*self.melody_comp[3][i]) <= 15:
                     self.excellent += 1
@@ -407,7 +415,7 @@ class PlayScreen(Screen):
         print(self.music_name, self.level)
         print(self.dt, self.dy, self.dist, self.music_sound_url)
         print(self.n, self.m)
-
+        
         with self.canvas:
             # ノーツの色設定
             Color(1, 0, 0, 5, 1)
@@ -500,9 +508,8 @@ class PlayScreen(Screen):
     """
 
     def High_Score(self):
-        print(self.music_name, self.level, self.score)
+        # print(self.music_name, self.level, self.score)
         # 押されたラベルの難易度を格納
-        sorted_score = []
 
         # 接続処理, カーソルオブジェクトを取得
         con = sqlite3.connect('score.db')
@@ -518,27 +525,37 @@ class PlayScreen(Screen):
         cur.execute('select * from "oop2-last-issue" where music_name =? and mode =? order by score desc limit 3', [
             self.music_name, self.level])
 
-        # ソートしたデータをsorted_scoreに格納
-        for data in cur:
-            sorted_score.append(data)
-        #print(sorted_score[0][2], sorted_score[1][2], sorted_score[2][2])
-        first = sorted_score[0][2]
-        second = sorted_score[1][2]
-        third = sorted_score[2][2]
-        # 値格納、タプルだったので取り出し
-
-        # game.kvで使用する変数, 最高スコアの格納
-        if first > int(self.first_score):
-            self.first_score = str(first)
-            HomeScreen.first_score = int(self.first_score)
-        elif second > int(self.second_score) and first < int(self.first_score):
-            self.second_score = str(second)
-            HomeScreen.second_score = self.second_score
-        elif third > int(self.third_score) and second < int(self.second_score):
-            self.third_score = str(third)
-            HomeScreen.third_score = self.third_score
         # クローズ
         con.close()
+
+    def popup_open(self):
+        PopupMenu.score = self.score
+        self.popup_result()
+        content = PopupMenu(popup_close=self.popup_close)
+        self.popup = Popup(title='Result', content=content,
+                           size_hint=(0.5, 0.5), auto_dismiss=False)
+        self.popup.open()
+
+    def popup_result(self):
+        if int(self.score) > int(self.first_score):
+            PopupMenu.result = 'Congratulations!\nYou got a 1st Place!'
+        elif int(self.score) > int(self.second_score) and int(self.score) < int(self.first_score):
+            PopupMenu.result = 'Congratulations!\nYou got a 2nd Place!'
+        elif int(self.score) > int(self.third_score) and int(self.score) < int(self.second_score):
+            PopupMenu.result = 'Congratulations!\nYou got a 3rd Place!'
+        else:
+            PopupMenu.result = 'You did not enter the top 3 scores,\nbut nice job! Try better next time!'
+
+    def popup_close(self):
+        self.popup.dismiss()
+        self.end_game()
+        self.manager.current = 'home'
+
+
+class PopupMenu(BoxLayout):
+    score = 0
+    result = ''
+    popup_close = ObjectProperty()
 
 
 sm = ScreenManager()
