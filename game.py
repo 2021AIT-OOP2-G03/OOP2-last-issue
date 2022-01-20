@@ -102,6 +102,7 @@ class HomeScreen(Screen):
         # 取得したデータをscoreに格納
         for data in cur:
             score.append(data)
+            print(score)
 
         # game.kvで使用する変数に格納
         self.first_score = str(score[0][0])
@@ -477,6 +478,7 @@ class PlayScreen(Screen):
     """
 
     def High_Score(self):
+        print(self.music_name, self.level, self.score)
         # 押されたラベルの難易度を格納
         sorted_score = []
 
@@ -484,32 +486,35 @@ class PlayScreen(Screen):
         con = sqlite3.connect('score.db')
         cur = con.cursor()
 
-        sql = 'insert into "oop2-last-issue" values(?,?,?)', [
-            self.music_name, self.level, self.score]
         # 仮実装、曲名と難易度、スコアを挿入
-        cur.execute(sql)
-        cur.commit()
+        con.execute('insert into "oop2-last-issue" values(?,?,?)', [
+            self.music_name, self.level, self.score])
+        con.commit()
 
         # スコアのソーティング
-        sort = 'select * from "oop2-last-issue" order by score desc where music_name =? and mode =? limit 3', [
-            self.music_name, self.level]
-        cur.execute(sort)
+
+        cur.execute('select * from "oop2-last-issue" where music_name =? and mode =? order by score desc limit 3', [
+            self.music_name, self.level])
 
         # ソートしたデータをsorted_scoreに格納
         for data in cur:
             sorted_score.append(data)
+        #print(sorted_score[0][2], sorted_score[1][2], sorted_score[2][2])
+        first = sorted_score[0][2]
+        second = sorted_score[1][2]
+        third = sorted_score[2][2]
+        # 値格納、タプルだったので取り出し
 
         # game.kvで使用する変数, 最高スコアの格納
-        for final_score in sorted_score:
-            if final_score > self.first_score:
-                self.first_score = str(final_score[0][0])
-                HomeScreen.first_score = self.first_score
-            elif final_score > self.second_score and final_score < self.first_score:
-                self.second_score = str(final_score[1][0])
-                HomeScreen.second_score = self.second_score
-            elif final_score > self.third_score and final_score < self.second_score:
-                self.third_score = str(final_score[2][0])
-                HomeScreen.third_score = self.third_score
+        if first > int(self.first_score):
+            self.first_score = str(first)
+            HomeScreen.first_score = int(self.first_score)
+        elif second > int(self.second_score) and first < int(self.first_score):
+            self.second_score = str(second)
+            HomeScreen.second_score = self.second_score
+        elif third > int(self.third_score) and second < int(self.second_score):
+            self.third_score = str(third)
+            HomeScreen.third_score = self.third_score
         # クローズ
         con.close()
 
