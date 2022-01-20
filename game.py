@@ -95,7 +95,7 @@ class HomeScreen(Screen):
         cur = con.cursor()
         # 現在の曲名と難易度のスコアを取得
         sql = "select score from 'oop2-last-issue' where music_name='" + \
-            self.music_name + "' and mode='" + self.level + "'"
+            self.music_name + "' and mode='" + self.level + "'order by score desc"
         cur.execute(sql)
 
         # 取得したデータをscoreに格納
