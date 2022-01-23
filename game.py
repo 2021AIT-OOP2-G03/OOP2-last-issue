@@ -26,6 +26,8 @@ import music_list
 
 Builder.load_file('game.kv')
 
+Window.size = 800,600
+
 
 class HomeScreen(Screen):
     # 曲名を格納する変数
@@ -85,8 +87,6 @@ class HomeScreen(Screen):
         # クローズ
         con.close()
 
-        print(Window.size)
-
     def pressed_left(self):
         # 曲番号０にいるときは左矢印で最後の曲番号にしたいため最後の曲番号を格納
         if self.music_number <= 0:
@@ -99,6 +99,30 @@ class HomeScreen(Screen):
         # 曲番号の名前と画像のurlをそれぞれ格納
         self.music_name = self.music_list[self.music_number]
         self.music_image = self.music_image_url[self.music_number]
+        
+        # データベースから取得したスコアを格納する
+        score = []
+
+        # データベースに接続
+        con = sqlite3.connect('score.db')
+        cur = con.cursor()
+        # 現在の曲名と難易度のスコアを取得
+        sql = "select score from 'oop2-last-issue' where music_name='" + \
+            self.music_name + "' and mode='" + self.level + "'order by score desc"
+        cur.execute(sql)
+
+        # 取得したデータをscoreに格納
+        for data in cur:
+            score.append(data)
+            # print(score)
+
+        # game.kvで使用する変数に格納
+        self.first_score = str(score[0][0])
+        self.second_score = str(score[1][0])
+        self.third_score = str(score[2][0])
+
+        # クローズ
+        con.close()
 
     def pressed_right(self):
         # 曲番号２にいるときは右矢印で最初の曲番号にしたいため最初の曲番号を格納
@@ -112,6 +136,30 @@ class HomeScreen(Screen):
         # 曲番号の名前と画像のurlをそれぞれ格納
         self.music_name = self.music_list[self.music_number]
         self.music_image = self.music_image_url[self.music_number]
+        
+        # データベースから取得したスコアを格納する
+        score = []
+
+        # データベースに接続
+        con = sqlite3.connect('score.db')
+        cur = con.cursor()
+        # 現在の曲名と難易度のスコアを取得
+        sql = "select score from 'oop2-last-issue' where music_name='" + \
+            self.music_name + "' and mode='" + self.level + "'order by score desc"
+        cur.execute(sql)
+
+        # 取得したデータをscoreに格納
+        for data in cur:
+            score.append(data)
+            # print(score)
+
+        # game.kvで使用する変数に格納
+        self.first_score = str(score[0][0])
+        self.second_score = str(score[1][0])
+        self.third_score = str(score[2][0])
+
+        # クローズ
+        con.close()
 
     def pressed_level(self, arg):
         # 押されたラベルの難易度を格納
@@ -285,7 +333,7 @@ class PlayScreen(Screen):
             # self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当)))
 
             for row in range(len(self.melody_comp[col])):
-                self.rect[col][self.melody_comp[col][row]].pos = 200 * \
+                self.rect[col][self.melody_comp[col][row]].pos = 100 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
 
         # 任意のノーツの座標の流れを確認できる(デバッグ用)
@@ -455,7 +503,7 @@ class PlayScreen(Screen):
                     if self.melody[col][row] == 1:
                         # self.rect.append(Rectangle(pos=(width*col,self.move_y),size=(width,100)))
                         self.rect[col][row] = Rectangle(
-                            pos=(200*col+10*(col-1), self.move_y+(self.dist*row)), size=(200, 100))
+                            pos=(100*col+10*(col-1), self.move_y+(self.dist*row)), size=(100, 50))
 
                         # それぞれのレーンで音符が合った座標を追加する
                         self.melody_comp[col].append(row)
