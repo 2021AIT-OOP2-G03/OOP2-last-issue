@@ -12,6 +12,7 @@ from kivy.uix.widget import Widget
 from kivy.properties import StringProperty
 from kivy.properties import NumericProperty
 from kivy.properties import ObjectProperty
+from kivy.properties import BooleanProperty
 from kivy.clock import Clock
 from kivy.core.audio import SoundLoader
 from kivy.uix.label import Label
@@ -58,7 +59,31 @@ class HomeScreen(Screen):
         self.music_name = self.music_list[0]
         # 現在の曲番号のurlを格納
         self.music_image = self.music_image_url[0]
-        self.level = ''
+        self.level = 'easy'
+        
+        # データベースから取得したスコアを格納する
+        score = []
+
+        # データベースに接続
+        con = sqlite3.connect('score.db')
+        cur = con.cursor()
+        # 現在の曲名と難易度のスコアを取得
+        sql = "select score from 'oop2-last-issue' where music_name='" + \
+            self.music_name + "' and mode='" + self.level + "'order by score desc"
+        cur.execute(sql)
+
+        # 取得したデータをscoreに格納
+        for data in cur:
+            score.append(data)
+            # print(score)
+
+        # game.kvで使用する変数に格納
+        self.first_score = str(score[0][0])
+        self.second_score = str(score[1][0])
+        self.third_score = str(score[2][0])
+
+        # クローズ
+        con.close()
 
         print(Window.size)
 
@@ -118,11 +143,11 @@ class HomeScreen(Screen):
 
     # プレイボタンを選択した時にPlayScreenに曲名と難易度の情報を引き渡す
     def select_game(self, music_name, level):
-        PlayScreen.music_name = music_name
-        PlayScreen.level = level
-        PlayScreen.first_score = self.first_score
-        PlayScreen.second_score = self.second_score
-        PlayScreen.third_score = self.third_score
+            PlayScreen.music_name = music_name
+            PlayScreen.level = level
+            PlayScreen.first_score = self.first_score
+            PlayScreen.second_score = self.second_score
+            PlayScreen.third_score = self.third_score
 
 
 class PlayScreen(Screen):
@@ -159,7 +184,7 @@ class PlayScreen(Screen):
         super().__init__(**kw)
     '''
 
-    startisEnable = False
+    startisEnable = BooleanProperty(False)
 
     dt = 1/30  # フレーム周期
     move_y = NumericProperty(1000)  # ノーツのy軸上の位置
@@ -390,6 +415,7 @@ class PlayScreen(Screen):
 
     # ゲーム画面右下のStartボタンが押された時に実行される処理
     def start_game(self):
+        self.startisEnable = True
         # Startボタンのテキストを変更
         self.text = ''
 
@@ -459,6 +485,8 @@ class PlayScreen(Screen):
 
         # Startボタンのテキストを元に戻す
         self.text = "Start"
+        
+        self.startisEnable = False
 
         # self.rect = [[Rectangle(pos=(0, 0), size=(0, 0)) for row in range(
         #         self.limit_row)] for col in range(self.limit_col)]
