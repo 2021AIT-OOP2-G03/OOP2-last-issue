@@ -183,8 +183,8 @@ class PlayScreen(Screen):
     def __init__(self, **kw):
         super().__init__(**kw)
     '''
-
-    startisEnable = BooleanProperty(False)
+    # startボタンを有効な状態にする
+    startisDisable = BooleanProperty(False)
 
     dt = 1/30  # フレーム周期
     move_y = NumericProperty(1000)  # ノーツのy軸上の位置
@@ -415,7 +415,8 @@ class PlayScreen(Screen):
 
     # ゲーム画面右下のStartボタンが押された時に実行される処理
     def start_game(self):
-        self.startisEnable = True
+        # startボタンを無効にする
+        self.startisDisable = True
         # Startボタンのテキストを変更
         self.text = ''
 
@@ -486,7 +487,8 @@ class PlayScreen(Screen):
         # Startボタンのテキストを元に戻す
         self.text = "Start"
         
-        self.startisEnable = False
+        # 再びstartボタンを有効にする
+        self.startisDisable = False
 
         # self.rect = [[Rectangle(pos=(0, 0), size=(0, 0)) for row in range(
         #         self.limit_row)] for col in range(self.limit_col)]
