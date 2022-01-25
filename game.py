@@ -333,8 +333,14 @@ class PlayScreen(Screen):
             # self.move_y+100(=ノーツの縦の長さ)*(0(=行の数)+3*l(=テストプログラム用の数(適当)))
 
             for row in range(len(self.melody_comp[col])):
-                self.rect[col][self.melody_comp[col][row]].pos = 100 * \
+                self.rect[col][self.melody_comp[col][row]].pos = 200 * \
                     col, self.move_y+(self.dist*self.melody_comp[col][row])
+
+            '''
+            for row in range(len(self.melody_comp[col])):
+                self.rect[col][self.melody_comp[col][row]].pos = 200 * \
+                    col, self.move_y+(self.dist*self.melody_comp[col][row])
+            '''
 
         # 任意のノーツの座標の流れを確認できる(デバッグ用)
         # print(self.rect[0][0].pos, self.rect[3][3].pos)
@@ -503,7 +509,7 @@ class PlayScreen(Screen):
                     if self.melody[col][row] == 1:
                         # self.rect.append(Rectangle(pos=(width*col,self.move_y),size=(width,100)))
                         self.rect[col][row] = Rectangle(
-                            pos=(100*col+10*(col-1), self.move_y+(self.dist*row)), size=(100, 50))
+                            pos=(200*col+10*(col-1), self.move_y+(self.dist*row)), size=(200, 100))
 
                         # それぞれのレーンで音符が合った座標を追加する
                         self.melody_comp[col].append(row)
